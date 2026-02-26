@@ -1,0 +1,131 @@
+/* SpoilerWall — Content Styles (Red Theme) */
+
+/* ── Blurred container (holds sw-blur-content + sw-overlay as siblings) ── */
+.sw-blurred {
+  /* Blur is applied to .sw-blur-content, not the container,
+     so the overlay remains sharp */
+}
+
+/* ── Inner blur layer (wraps original page content) ── */
+.sw-blur-content {
+  filter: blur(16px) !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  transition: filter 0.25s ease !important;
+}
+
+/* ── Overlay ── */
+.sw-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  min-height: 36px !important;
+  background: rgba(10, 3, 3, 0.86) !important;
+  backdrop-filter: blur(3px) !important;
+  -webkit-backdrop-filter: blur(3px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2147483640 !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(239, 68, 68, 0.32) !important;
+  box-sizing: border-box !important;
+  transition: opacity 0.28s ease !important;
+  pointer-events: all !important;
+}
+
+.sw-overlay:hover {
+  background: rgba(10, 3, 3, 0.93) !important;
+  border-color: rgba(239, 68, 68, 0.6) !important;
+}
+
+.sw-overlay-inner {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 12px !important;
+  pointer-events: none !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ── SpoilerWall logo icon inside overlay ── */
+.sw-shield-svg {
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+  border-radius: 4px !important;
+}
+
+.sw-overlay-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  line-height: 1.3 !important;
+  min-width: 0 !important;
+}
+
+.sw-brand {
+  color: #f87171 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  display: block !important;
+  text-decoration: none !important;
+}
+
+.sw-desc {
+  color: rgba(240, 220, 220, 0.85) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 220px !important;
+  display: block !important;
+  text-decoration: none !important;
+}
+
+.sw-desc em {
+  color: #fca5a5 !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+}
+
+/* ── Reveal button ── */
+.sw-reveal-btn {
+  pointer-events: all !important;
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 5px 13px !important;
+  border-radius: 20px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  transition: background 0.15s ease, transform 0.1s ease !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1.5 !important;
+  text-decoration: none !important;
+}
+
+.sw-reveal-btn:hover {
+  background: #dc2626 !important;
+  transform: scale(1.04) !important;
+}
+
+/* ── Fade out animation ── */
+.sw-fade-out {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ── Revealed state (marker — prevents re-blurring after user dismisses) ── */
+.sw-revealed {
+  /* Intentionally empty — used as a selector marker in JS */
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpoilerWall</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-brand">
+      <img class="brand-icon" src="../icons/icon32.png" alt="">
+      <span class="header-title">
+        <span class="title-spoiler">Spoiler</span><span class="title-wall">Wall</span>
+      </span>
+    </div>
+    <div class="header-actions">
+      <span class="badge-count" id="badge-count" title="Spoilers bloqueados en esta página"></span>
+      <button class="icon-btn" id="btn-options" title="Configuración">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Global toggle ──────────────────────────────────────── -->
+  <section class="toggles-section">
+    <div class="toggle-row" id="global-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Protección global</span>
+        <span class="toggle-sub">Activa en todos los sitios</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggle-global">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row" id="site-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Este sitio</span>
+        <span class="toggle-sub" id="site-hostname">—</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggle-site">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Search section ────────────────────────────────────── -->
+  <section class="search-section">
+    <div class="tab-bar">
+      <button class="tab active" data-tab="tv">📺 Series</button>
+      <button class="tab" data-tab="movie">🎬 Películas</button>
+      <button class="tab" data-tab="anime">⛩️ Anime</button>
+    </div>
+
+    <div class="search-row">
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Buscar título..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="search-btn" id="search-btn">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2.2"/>
+          <line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- No API key warning -->
+    <div class="no-key-warning" id="no-key-warning" style="display:none">
+      ⚠️ Configurá tu API key de TMDB en <a href="#" id="link-options-key">ajustes</a> para buscar películas y series.
+    </div>
+
+    <!-- Results -->
+    <div id="search-results" class="search-results"></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Protected list ────────────────────────────────────── -->
+  <section class="protected-section">
+    <div class="section-header">
+      <span class="section-title">Protegidos</span>
+      <span class="protected-count" id="protected-count">0</span>
+    </div>
+    <div id="protected-list" class="protected-list">
+      <div class="empty-state" id="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <p>Buscá un título para agregar protección</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Stats ─────────────────────────────────────────────── -->
+  <section class="stats-section">
+    <div class="stat-pill">
+      <img class="stat-svg" src="../icons/icon16.png" alt="">
+      <span class="stat-text"><strong id="stat-today">0</strong> bloqueados hoy</span>
+    </div>
+    <div class="stat-pill">
+      <svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span class="stat-text"><strong id="stat-total">0</strong> total</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Footer CTA ─────────────────────────────────────────── -->
+  <section class="footer-cta">
+    <a href="https://spoilerwall.onrender.com/" target="_blank" class="cta-link" id="cta-link">
+      <img class="cta-shield" src="../icons/icon32.png" alt="">
+      <div class="cta-text">
+        <strong class="cta-title"><span>Spoiler</span><span class="red">Wall</span></strong>
+        <span>Consultá sobre series, pelis o anime — sin spoilers</span>
+      </div>
+      <span class="cta-arrow">→</span>
+    </a>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>

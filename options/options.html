@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpoilerWall — Configuración</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <img class="sidebar-shield" src="../icons/icon32.png" alt="">
+        <span class="sidebar-title"><span>Spoiler</span><span class="red">Wall</span></span>
+      </div>
+      <ul class="nav-list">
+        <li><a class="nav-link active" href="#api">🔑 API Keys</a></li>
+        <li><a class="nav-link" href="#proteccion">🛡️ Protecciones</a></li>
+        <li><a class="nav-link" href="#apariencia">🎨 Apariencia</a></li>
+        <li><a class="nav-link" href="#privacidad">🔒 Privacidad</a></li>
+        <li><a class="nav-link" href="#about">ℹ️ Acerca de</a></li>
+      </ul>
+      <a href="https://spoilerwall.onrender.com/" target="_blank" class="sidebar-cta">
+        <img src="../icons/icon16.png" alt="" style="width:15px;height:15px;object-fit:contain;border-radius:3px;flex-shrink:0;">
+        SpoilerWall
+      </a>
+    </nav>
+
+    <!-- Main content -->
+    <main class="content">
+
+      <!-- ── API Keys ─────────────────────────────────────────────── -->
+      <section id="api" class="section">
+        <h2 class="section-title">🔑 Configuración de API</h2>
+        <p class="section-desc">
+          SpoilerWall usa la API de <strong>TMDB</strong> para buscar películas y series, y <strong>Jikan</strong> para anime (sin key necesaria).
+        </p>
+
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label" for="tmdb-key">
+              TMDB API Key
+              <a href="https://www.themoviedb.org/settings/api" target="_blank" class="field-link">
+                Obtener gratis →
+              </a>
+            </label>
+            <div class="input-row">
+              <input
+                type="password"
+                id="tmdb-key"
+                class="field-input"
+                placeholder="Pegá tu API key aquí..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="btn-show-key" id="btn-show-key" type="button" title="Mostrar/ocultar">👁</button>
+            </div>
+            <p class="field-hint">
+              La key se guarda localmente en tu navegador. Nunca se envía a nuestros servidores.
+            </p>
+            <div class="api-status" id="api-status"></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" id="btn-save-key">Guardar Key</button>
+            <button class="btn btn-ghost" id="btn-test-key">Probar conexión</button>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>¿Por qué necesito una key de TMDB?</strong>
+          <p>TMDB requiere registro para usar su API de búsqueda de películas y series. El registro es gratuito y la key de nivel "Free" es más que suficiente. Para anime, usamos <strong>Jikan</strong> que es completamente libre y sin registro.</p>
+        </div>
+      </section>
+
+      <!-- ── Protecciones ─────────────────────────────────────────── -->
+      <section id="proteccion" class="section">
+        <h2 class="section-title">🛡️ Títulos Protegidos</h2>
+        <p class="section-desc">Administrá todos los títulos que estás protegiendo contra spoilers.</p>
+
+        <div class="card">
+          <div class="protected-header">
+            <span class="protected-total" id="opt-protected-count">0 títulos protegidos</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" id="btn-export">Exportar</button>
+              <button class="btn btn-ghost btn-sm" id="btn-import-trigger">Importar</button>
+              <input type="file" id="import-file" accept=".json" style="display:none">
+            </div>
+          </div>
+          <div id="opt-protected-list" class="opt-protected-list"></div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Sitios desactivados</h3>
+          <p class="field-hint">Sitios donde desactivaste la protección manualmente desde el popup.</p>
+          <div id="disabled-sites-list" class="disabled-sites-list"></div>
+          <button class="btn btn-ghost btn-sm" id="btn-clear-sites" style="margin-top:10px;">Limpiar lista</button>
+        </div>
+      </section>
+
+      <!-- ── Apariencia ───────────────────────────────────────────── -->
+      <section id="apariencia" class="section">
+        <h2 class="section-title">🎨 Apariencia</h2>
+        <p class="section-desc">Personalizá cómo se muestran los spoilers bloqueados.</p>
+
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label">Intensidad del blur</label>
+            <div class="slider-row">
+              <input type="range" id="blur-amount" min="4" max="20" value="10" class="range-input">
+              <span class="range-val" id="blur-val">10px</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Color del overlay</label>
+            <div class="color-presets">
+              <button class="color-preset active" data-color="dark" style="background:#080519;">Oscuro</button>
+              <button class="color-preset" data-color="purple" style="background:#2e1065;">Púrpura</button>
+              <button class="color-preset" data-color="blue" style="background:#0c1a3a;">Azul</button>
+              <button class="color-preset" data-color="black" style="background:#000;">Negro</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Idioma del overlay</label>
+            <select id="overlay-lang" class="field-select">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-primary" id="btn-save-appearance">Guardar cambios</button>
+          </div>
+        </div>
+
+        <div class="blur-preview" id="blur-preview">
+          <div class="blur-preview-content">
+            <div class="preview-text" id="preview-text">
+              Season 8 was amazing! The scene where Jon Snow... 🔥🔥🔥
+            </div>
+            <div class="preview-overlay" id="preview-overlay">
+              <div class="preview-inner">
+                <span>🛡️</span>
+                <div>
+                  <strong>SpoilerWall</strong>
+                  <span id="preview-desc">Posible spoiler sobre: Game of Thrones</span>
+                </div>
+                <button>Revelar</button>
+              </div>
+            </div>
+          </div>
+          <p class="preview-label">Vista previa del overlay</p>
+        </div>
+      </section>
+
+      <!-- ── Privacidad ───────────────────────────────────────────── -->
+      <section id="privacidad" class="section">
+        <h2 class="section-title">🔒 Privacidad</h2>
+
+        <div class="info-box info-green">
+          <strong>✅ Tus datos nunca salen de tu dispositivo</strong>
+          <p>SpoilerWall procesa todo localmente en tu navegador. No tenemos servidores que reciban tu historial de navegación, los títulos que protegés, o el contenido de las páginas que visitás.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">¿Qué permisos usa SpoilerWall?</h3>
+          <div class="permission-list">
+            <div class="permission-item">
+              <div class="perm-icon perm-green">✓</div>
+              <div class="perm-info">
+                <strong>Almacenamiento local</strong>
+                <span>Para guardar tus preferencias y lista de títulos protegidos en tu dispositivo.</span>
+              </div>
+            </div>
+            <div class="permission-item">
+              <div class="perm-icon perm-green">✓</div>
+              <div class="perm-info">
+                <strong>Acceso a páginas web</strong>
+                <span>Para detectar menciones de spoilers en el texto de las páginas. El contenido NUNCA se envía a ningún servidor.</span>
+              </div>
+            </div>
+            <div class="permission-item">
+              <div class="perm-icon perm-green">✓</div>
+              <div class="perm-info">
+                <strong>Pestaña activa</strong>
+                <span>Para mostrar el nombre del sitio actual en el popup y activar/desactivar por sitio.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Datos guardados localmente</h3>
+          <p class="field-hint" style="margin-bottom:12px;">Solo se guarda en tu navegador local, nunca en la nube.</p>
+          <div class="data-list">
+            <div class="data-item"><span>📋 Títulos protegidos</span><span id="data-titles">0</span></div>
+            <div class="data-item"><span>🚫 Sitios desactivados</span><span id="data-sites">0</span></div>
+            <div class="data-item"><span>🛡️ Spoilers bloqueados (total)</span><span id="data-blocked">0</span></div>
+            <div class="data-item"><span>💾 Caché de búsquedas</span><span id="data-cache">0 entradas</span></div>
+          </div>
+          <button class="btn btn-danger btn-sm" id="btn-clear-cache" style="margin-top:12px;">Limpiar caché de búsquedas</button>
+          <button class="btn btn-danger btn-sm" id="btn-reset-all" style="margin-top:8px;">Resetear todo (borra todos los datos)</button>
+        </div>
+      </section>
+
+      <!-- ── About ─────────────────────────────────────────────────── -->
+      <section id="about" class="section">
+        <h2 class="section-title">ℹ️ Acerca de SpoilerWall</h2>
+
+        <div class="card about-card">
+          <div class="about-header">
+            <img class="about-logo-svg" src="../icons/icon48.png" alt="SpoilerWall">
+            <div>
+              <h3><span>Spoiler</span><span class="red">Wall</span></h3>
+              <span class="version-badge">v1.0.0</span>
+            </div>
+          </div>
+          <p class="about-desc">
+            SpoilerWall protege tu experiencia en internet bloqueando automáticamente menciones de spoilers sobre películas, series y anime en cualquier sitio web o red social.
+          </p>
+
+          <div class="about-links">
+            <a href="https://spoilerwall.onrender.com/" target="_blank" class="about-link">
+              <img src="../icons/icon16.png" alt="" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;">
+              SpoilerWall — Consultá sin spoilers
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">APIs utilizadas</h3>
+          <div class="api-credits">
+            <div class="api-credit-item">
+              <strong>TMDB</strong>
+              <span>The Movie Database — películas y series</span>
+              <a href="https://www.themoviedb.org/" target="_blank">themoviedb.org</a>
+            </div>
+            <div class="api-credit-item">
+              <strong>Jikan</strong>
+              <span>API no oficial de MyAnimeList — anime</span>
+              <a href="https://jikan.moe/" target="_blank">jikan.moe</a>
+            </div>
+          </div>
+          <p class="tmdb-disclaimer">
+            Este producto usa la API de TMDB pero no está respaldado ni certificado por TMDB.
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

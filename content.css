@@ -1,17 +1,8 @@
 /* SpoilerWall — Content Styles (Red Theme) */
 
-/* ── Blurred container (holds sw-blur-content + sw-overlay as siblings) ── */
+/* ── Blurred container — overlay sits on top, content untouched ── */
 .sw-blurred {
-  /* Blur is applied to .sw-blur-content, not the container,
-     so the overlay remains sharp */
-}
-
-/* ── Inner blur layer (wraps original page content) ── */
-.sw-blur-content {
-  filter: blur(16px) !important;
-  user-select: none !important;
-  pointer-events: none !important;
-  transition: filter 0.25s ease !important;
+  overflow: hidden !important;
 }
 
 /* ── Overlay ── */
@@ -19,7 +10,7 @@
   position: absolute !important;
   inset: 0 !important;
   min-height: 36px !important;
-  background: rgba(10, 3, 3, 0.86) !important;
+  background: rgba(10, 3, 3, 0.97) !important;
   backdrop-filter: blur(3px) !important;
   -webkit-backdrop-filter: blur(3px) !important;
   display: flex !important;
@@ -35,7 +26,7 @@
 }
 
 .sw-overlay:hover {
-  background: rgba(10, 3, 3, 0.93) !important;
+  background: rgba(15, 5, 5, 0.99) !important;
   border-color: rgba(239, 68, 68, 0.6) !important;
 }
 

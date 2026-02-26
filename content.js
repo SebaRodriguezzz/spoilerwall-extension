@@ -161,16 +161,17 @@
     scanAttributes(root);
   }
 
-  // ─── Scan attributes (alt, aria-label) for title mentions ────────────────
+  // ─── Scan attributes (alt, aria-label, title) for title mentions ─────────
   function scanAttributes(root) {
-    const candidates = root.querySelectorAll('[alt], [aria-label]');
+    const candidates = root.querySelectorAll('[alt], [aria-label], [title]');
     for (const el of candidates) {
       if (!el.isConnected) continue;
       if (el.closest(`[${BLURRED}]`) || el.closest('.sw-overlay, .sw-revealed')) continue;
 
       const text = [
         el.getAttribute('alt') || '',
-        el.getAttribute('aria-label') || ''
+        el.getAttribute('aria-label') || '',
+        el.getAttribute('title') || ''
       ].join(' ');
 
       if (!text.trim()) continue;
@@ -191,21 +192,23 @@
   function findContainer(element) {
     if (!element) return null;
 
-    // Preferred semantic containers — ordered from most to least specific.
-    // NOTE: tweetText intentionally excluded so we get the full tweet
-    // container (including attached images) via [data-testid="tweet"].
     const PREFERRED = [
-      '[data-testid="tweet"]',           // Full tweet including images/video
-      '[data-testid="post-container"]',  // Reddit
-      'shreddit-post',
-      '.thing',
-      'ytd-comment-renderer',
-      'ytd-video-primary-info-renderer',
+      '[data-testid="tweet"]',            // Twitter/X — full card with images
+      '[data-testid="post-container"]',   // Reddit
+      'shreddit-post',                    // Reddit new
+      '.thing',                           // Reddit old
+      'ytd-comment-renderer',             // YouTube comments
+      'ytd-video-primary-info-renderer',  // YouTube video info
+      'ytd-rich-item-renderer',           // YouTube feed cards
       '[data-ad-preview="message"]',
       '[data-testid="post_message"]',
       '[role="listitem"]',
       'article',
       '[role="article"]',
+      '.entry',
+      '.feed-item',
+      '.post-card',
+      '.status',
     ];
 
     let el = element;
@@ -216,46 +219,43 @@
       el = el.parentElement;
     }
 
-    // Fallback: walk up to first block element of reasonable size
+    // Fallback: walk up looking for a block container that includes images
+    // or is large enough to be a full card. A plain <p> is not enough —
+    // keep going until we find something that wraps the whole post/card.
     el = element;
+    let candidate = null;
     while (el && el !== document.body) {
       const tag = el.tagName.toLowerCase();
-      if (['p', 'li', 'blockquote', 'td', 'div'].includes(tag)) {
+      if (['div', 'li', 'section', 'figure', 'blockquote', 'td'].includes(tag)) {
         const rect = el.getBoundingClientRect();
         const cs = window.getComputedStyle(el);
-        const isBlock = ['block','flex','grid','list-item'].includes(cs.display);
+        const isBlock = ['block', 'flex', 'grid', 'list-item'].includes(cs.display);
         if (isBlock && rect.height > 10) {
-          return el;
+          candidate = el;
+          // Prefer containers with images (full card) or tall/wide enough
+          if (el.querySelector('img') || (rect.height > 80 && rect.width > 250)) {
+            return el;
+          }
         }
       }
       el = el.parentElement;
     }
 
-    return element.parentElement || element;
+    return candidate || element.parentElement || element;
   }
 
   // ─── Apply Blur ───────────────────────────────────────────────────────────
   function applyBlur(container, titleName) {
-    // Re-check in case another scan already blurred it
     if (container.hasAttribute(BLURRED)) return;
     container.setAttribute(BLURRED, 'true');
     container.classList.add('sw-blurred');
 
-    // Ensure relative positioning for absolute overlay
     const pos = window.getComputedStyle(container).position;
     if (pos === 'static') container.style.position = 'relative';
 
-    // Wrap existing children in a blur layer so the overlay stays sharp.
-    // The overlay is appended to the container AFTER sw-blur-content,
-    // making it a sibling — so the container's filter doesn't blur it.
-    const blurContent = document.createElement('div');
-    blurContent.className = 'sw-blur-content';
-    while (container.firstChild) {
-      blurContent.appendChild(container.firstChild);
-    }
-    container.appendChild(blurContent);
-
-    // Build overlay (sibling of blurContent — NOT inside the blurred layer)
+    // Overlay covers the container without touching its children.
+    // Moving children would trigger React/framework re-renders which
+    // immediately restore the DOM and wipe the overlay.
     const overlay = document.createElement('div');
     overlay.className = 'sw-overlay';
     overlay.setAttribute('role', 'button');
@@ -279,7 +279,6 @@
     container.appendChild(overlay);
     blockedCount++;
 
-    // Reveal on click / Enter key
     overlay.addEventListener('click', () => reveal(container, overlay));
     overlay.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') reveal(container, overlay);
@@ -287,16 +286,8 @@
   }
 
   function reveal(container, overlay) {
-    // Restore original children from blur wrapper
-    const blurContent = container.querySelector(':scope > .sw-blur-content');
-    if (blurContent) {
-      while (blurContent.firstChild) {
-        container.insertBefore(blurContent.firstChild, blurContent);
-      }
-      blurContent.remove();
-    }
     container.classList.remove('sw-blurred');
-    container.classList.add('sw-revealed'); // prevents re-blurring
+    container.classList.add('sw-revealed');
     overlay.classList.add('sw-fade-out');
     setTimeout(() => {
       overlay.remove();
@@ -322,14 +313,6 @@
   // ─── Remove all blurs (used when extension is disabled) ──────────────────
   function removeAllBlurs() {
     document.querySelectorAll(`[${BLURRED}]`).forEach(el => {
-      // Restore children from blur wrapper
-      const blurContent = el.querySelector(':scope > .sw-blur-content');
-      if (blurContent) {
-        while (blurContent.firstChild) {
-          el.insertBefore(blurContent.firstChild, blurContent);
-        }
-        blurContent.remove();
-      }
       el.removeAttribute(BLURRED);
       el.classList.remove('sw-blurred', 'sw-revealed');
       el.style.position = '';

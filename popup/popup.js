@@ -178,7 +178,6 @@
       return;
     }
 
-    const data = chrome.storage.local.get('protectedTitles');
     chrome.storage.local.get('protectedTitles', ({ protectedTitles: existing = [] }) => {
       const existingIds = new Set(existing.map(e => e.id + '_' + e.source));
 

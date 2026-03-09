@@ -14,9 +14,13 @@
   let patterns = []; // { titleName, regexCI, regexCS, titleData }
   let blockedCount = 0;
   let scanPending = false;
+  let activeObserver = null;
 
   const BLURRED = 'data-sw-blurred';
   const HOSTNAME = location.hostname.replace(/^www\./, '');
+  const SKIP_TAGS = new Set(['script','style','noscript','code','pre','kbd',
+                             'textarea','input','select','button','label',
+                             'meta','link','svg','math']);
 
   // ─── Init ─────────────────────────────────────────────────────────────────
   async function init() {
@@ -118,10 +122,7 @@
           if (!el) return NodeFilter.FILTER_REJECT;
 
           const tag = el.tagName.toLowerCase();
-          const skipTags = new Set(['script','style','noscript','code','pre','kbd',
-                                    'textarea','input','select','button','label',
-                                    'meta','link','svg','math']);
-          if (skipTags.has(tag)) return NodeFilter.FILTER_REJECT;
+          if (SKIP_TAGS.has(tag)) return NodeFilter.FILTER_REJECT;
 
           // Skip already blurred subtrees
           if (el.closest(`[${BLURRED}]`)) return NodeFilter.FILTER_REJECT;
@@ -324,6 +325,11 @@
 
   // ─── Mutation Observer (dynamic content) ─────────────────────────────────
   function observeMutations() {
+    if (activeObserver) {
+      activeObserver.disconnect();
+      activeObserver = null;
+    }
+
     const observer = new MutationObserver((mutations) => {
       if (!isActive() || patterns.length === 0) return;
       if (scanPending) return;
@@ -344,6 +350,7 @@
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+    activeObserver = observer;
   }
 
   // ─── Listen for storage changes ───────────────────────────────────────────
